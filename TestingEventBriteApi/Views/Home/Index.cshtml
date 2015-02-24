@@ -1,0 +1,53 @@
+﻿@using TestingEventBriteApi.Models
+@model TestingEventBriteApi.ViewModels.HomeViewModel
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>EventBrite</h1>
+            </hgroup>
+            <p>
+                Example of eventbrite registration progress.
+            </p>
+        </div>
+    </section>
+}
+
+<h1>Really good test event</h1>
+<p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla justo eget lacus commodo varius. Proin eu fringilla eros.
+    Sed consequat libero eu massa gravida viverra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+    Etiam fermentum mattis odio, eu sollicitudin ante auctor luctus. Duis dapibus risus non augue convallis, a iaculis erat posuere.
+    Praesent nec tempor ante, sit amet consectetur nisi. Integer placerat tincidunt nunc at viverra. Suspendisse eleifend tincidunt cursus.
+    Integer efficitur dictum libero, id viverra neque porttitor a. Fusce facilisis consectetur hendrerit. Curabitur libero odio, viverra nec nulla eget,
+    congue rutrum quam. Donec consequat leo quis blandit molestie. Aenean sodales aliquet enim, at malesuada massa efficitur sit amet. Nunc malesuada urna a iaculis venenatis.
+</p>
+
+<a href="https://www.eventbrite.co.uk/e/really-good-test-event-tickets-12528726759" target="_blank">Register Now</a>
+
+
+<h2>My Events</h2>
+
+@foreach (Event e in Model.MyEvents.Events)
+{
+    <table>
+        <tr>
+            <td>@Html.LabelFor(m => e.Name)</td>
+            <td>@Html.ActionLink(e.Name.Text,"EventDetails", new {id = e.Id})</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => e.Description)</td>
+            <td>@Html.Raw(e.Description)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => e.Capacity)</td>
+            <td>@e.Capacity</td>
+        </tr>
+    </table>
+}
+
+
+<h3>Export CSV</h3>
+<ul>
+    <li>@Html.ActionLink("Export All Events","ExportEvents")</li>
+</ul>

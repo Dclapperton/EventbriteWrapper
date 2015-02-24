@@ -1,0 +1,36 @@
+﻿@model TestingEventBriteApi.ViewModels.EventViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>@Model.Event.Name</h2>
+
+<p>Capacity: @Model.Event.Capacity</p>
+@Html.Raw(Model.Event.Description)
+
+
+<h3>Attendees</h3>
+
+<table>
+    <tr>
+        <th>Forename</th>
+        <th>Surname</th>
+        <th>Email</th>
+        <td></td>
+    </tr>
+    @foreach(var attendee in Model.PagedAttendees.Attendees){
+        <tr>
+            <td>@attendee.Profile.FirstName</td>
+            <td>@attendee.Profile.LastName</td>
+            <td>@attendee.Profile.Email</td>
+            <td>@Html.ActionLink("View Details", "AttendeeDetails", new { attendeeId = attendee.Id, eventId = Model.Event.Id })</td>
+        </tr>
+    }
+</table>
+
+<h3>Export CSV</h3>
+<ul>
+    <li>@Html.ActionLink("Export All Attendees", "ExportAttendees",new { eventId = Model.Event.Id })</li>
+</ul>
+

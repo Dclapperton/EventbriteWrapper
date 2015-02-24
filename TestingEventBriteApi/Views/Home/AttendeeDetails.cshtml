@@ -1,0 +1,68 @@
+﻿@model TestingEventBriteApi.ViewModels.AttendeeViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+<h3>@Model.Attendee.Profile.FirstName @Model.Attendee.Profile.LastName</h3>
+
+<table style="border:1px solid #000">
+    <tr>
+        <th>Forename</th>
+        <th>Surname</th>
+        <th>Email</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Changed</th>
+        <th>Created</th>
+    </tr>
+
+    <tr>
+        <td>@Model.Attendee.Profile.FirstName</td>
+        <td>@Model.Attendee.Profile.LastName</td>
+        <td>@Model.Attendee.Profile.Email</td>
+        <td>@Model.Attendee.Quantity</td>
+        <td>@Model.Attendee.Status</td>
+        <td>@Model.Attendee.Changed</td>
+        <td>@Model.Attendee.Created</td>
+    </tr>
+
+</table>
+
+<table style="border:1px solid #000">
+    <thead>Answers</thead>
+    <tbody>
+        <tr>
+            <td>Question Type</td>
+            <td>Question</td>
+        </tr>
+        @foreach (var answer in Model.Attendee.Answers)
+        {
+            <tr>
+                <td>@answer.Type</td>
+                <td>@answer.Question</td>
+                <td>Answer goes here!</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table style="border:1px solid #000">
+    <thead>Costs</thead>
+    <tbody>
+        <tr>
+            <th>Payment Fee</th>
+            <th>Gross</th>
+            <th>Eventbrite Fee</th>
+            <th>Tax</th>
+        </tr>
+        <tr>
+            <td>@Model.Attendee.Costs.PaymentFee.Display</td>
+            <td>@Model.Attendee.Costs.Gross.Display</td>
+            <td>@Model.Attendee.Costs.EventbriteFee.Display</td>
+            <td>@Model.Attendee.Costs.Tax.Display</td>
+        </tr>
+    </tbody>
+</table>
+
