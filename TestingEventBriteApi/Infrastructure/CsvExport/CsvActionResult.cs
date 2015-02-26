@@ -24,7 +24,7 @@ namespace TestingEventBriteApi.Infrastructure.CsvExport
     /// <typeparam name="T">
     /// Object to convert
     /// </typeparam>
-    public class CsvActionResult<T> : FileResult
+    public class CsvActionResult<T> : FileResult where T : class 
     {
         /// <summary>
         /// The _list.
@@ -125,22 +125,7 @@ namespace TestingEventBriteApi.Infrastructure.CsvExport
             {
                 if (Attribute.GetCustomAttribute(member, typeof(NonCsvProperty)) == null)
                 {
-                    Type t = member.PropertyType;
-                    if (t.IsPrimitive || t == typeof(decimal) || t == typeof(string))
-                    {
-                        this.WriteValue(streamWriter, member.Name);
-                    }
-                    else
-                    {
-                        foreach (PropertyInfo childMember in t.GetProperties())
-                        {
-                            Type childType = childMember.PropertyType;
-                            if (childType.IsPrimitive || childType == typeof(decimal) || childType == typeof(string))
-                            {
-                                this.WriteValue(streamWriter, childMember.Name, member.Name + " - ");
-                            }
-                        }
-                    }  
+                    this.WriteProperties(streamWriter, typeof(T).GetProperties(), null);
                 }
             }
         }
@@ -154,10 +139,10 @@ namespace TestingEventBriteApi.Infrastructure.CsvExport
         /// <param name="properties">
         /// The properties.
         /// </param>
-        /// <param name="optionalText">
-        /// Optional text before field name
+        /// <param name="line">
+        /// The line.
         /// </param>
-        private void WriteProperties(StreamWriter writer, IEnumerable<PropertyInfo> properties, string optionalText = "")
+        private void WriteProperties(StreamWriter writer, IEnumerable<PropertyInfo> properties, object line)
         {
             foreach (PropertyInfo property in properties)
             {
@@ -166,11 +151,16 @@ namespace TestingEventBriteApi.Infrastructure.CsvExport
                     Type t = property.PropertyType;
                     if (t.IsPrimitive || t == typeof(decimal) || t == typeof(string))
                     {
-                        this.WriteValue(writer, property.Name, optionalText);
+                        
+                        this.WriteValue(writer, line != null ? GetPropertyValue(line, property.Name) : property.Name);
+
                         continue;
                     }
 
-                    this.WriteProperties(writer, t.GetProperties());
+                    if (line != null)
+                    {
+                        this.WriteProperties(writer, t.GetProperties(), line.GetType().GetProperty(property.Name).GetValue(line, null));
+                    }
                 }
             }
         }
@@ -185,31 +175,7 @@ namespace TestingEventBriteApi.Infrastructure.CsvExport
         {
             foreach (var line in this.list)
             {
-                foreach (PropertyInfo member in typeof(T).GetProperties())
-                {
-                    if (Attribute.GetCustomAttribute(member, typeof(NonCsvProperty)) == null)
-                    {
-                        Type t = member.PropertyType;
-                        if (t.IsPrimitive || t == typeof(decimal) || t == typeof(string))
-                        {
-                            this.WriteValue(streamWriter, GetPropertyValue(line, member.Name));
-                        }    
-                        else
-                        {
-                            foreach (PropertyInfo childMember in t.GetProperties())
-                            {
-                                Type childType = childMember.PropertyType;
-                                if (childType.IsPrimitive || childType == typeof(decimal) || childType == typeof(string))
-                                {
-                                    var childObject = line.GetType().GetProperty(member.Name).GetValue(line, null);
-
-                                    this.WriteValue(streamWriter, GetPropertyValue(childObject, childMember.Name));
-                                }
-                            }
-                        }
-                    }
-                }
-
+                this.WriteProperties(streamWriter, typeof(T).GetProperties(), line);
                 streamWriter.WriteLine();
             }
         }
